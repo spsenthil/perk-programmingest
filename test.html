@@ -1,0 +1,154 @@
+<!doctype html>
+
+<html lang="en" ng-app="PerkSample">
+<head>
+  <meta charset="utf-8">
+
+  <title>Perk Programming Test</title>
+  <meta name="description" content="Programming Test">
+  <meta name="author" content="Perk">
+
+  <!-- Required Javascript Files -->
+  <script src="stub/api_responses.js"></script>
+
+
+  <!-- Vendor Javascript/CSS -->
+  <link href="css/app.css"/>
+  <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular.min.js"></script>
+  <script src="lib/angular-uuid2.min.js"></script>
+  <script src="app.js"></script>
+  <!-- Your Code Here -->
+  <!-- <script>
+    console.log(usersResponse);
+  </script>
+  -->
+</head>
+
+
+<body ng-cloak>
+
+<!-- id: id,
+first_name: firstName,
+last_name: lastName,
+email: email,
+is_suspended: isSuspended
+-->
+ 
+<div ng-controller="APIController">
+  {{greeting}}
+  <div class="container">
+    <h2>List of Users</h2>
+    <p class="new-user-wrap" style="text-align: right">
+    <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModel" ng-click="reset(userForm); createUser()">
+      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      Create new User
+    </button>
+    </p>
+    <table class="table table-hover  table-bordered">
+      <thead class="thead-default">
+      <tr>
+        <th>Email</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Is Suspended?</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody ng-repeat="user in users track by $index">
+        <tr ng-class="{danger: user.is_suspended}">
+          <td>{{user.email}}</td>
+          <td>{{user.first_name}}</td>
+          <td>{{user.last_name}}</td>
+          <td>{{user.is_suspended ?"Yes":"No"}}</td>
+          <td>
+            <button ng-if="!user.is_suspended" type="button" class="btn btn-info" data-toggle="modal" data-target="#editModel" ng-click="editUser(user.id)">
+              <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+              Edit
+            </button></td>
+
+        </tr>
+      </tbody>
+      </table>
+
+</div>
+
+
+  <!-- Edit Modal -->
+  <div id="editModel" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{(currentModalMode=="add" ||currentModalMode=="")?"Create User":"Edit User"}}</h4>
+        </div>
+        <div class="modal-body">
+
+          <form role="form"  class="css-form" name="userForm">
+            <div class="form-group required">
+              <label for="email" class="control-label">Email address:</label> &nbsp;  <span class="error-msg" ng-show="userForm.email.$touched && userForm.email.$error.required">Email is required.</span>
+              <input type="email" name="email" ng-model="currentEditRecord.email" required="required" class="form-control" id="email">
+              <!-- show an error if this isn't filled in -->
+
+            </div>
+            <div class="form-group required">
+              <label for="fname" class="control-label">First Name:</label>&nbsp;<span class="error-msg"  ng-show="userForm.fname.$touched && userForm.fname.$error.required">First name is required.</span>
+              <input type="text" name="fname" ng-model="currentEditRecord.first_name" required="required" class="form-control" id="fname">
+
+            </div>
+
+            <div class="form-group required">
+              <label for="lname" class="control-label">Last Name:</label>&nbsp;<span  class="error-msg" ng-show="userForm.lname.$touched &&  userForm.lname.$error.required">Last name is required.</span>
+              <input type="text"  name="lname"  ng-model="currentEditRecord.last_name" required="required" class="form-control" id="lname">
+
+            </div>
+
+            <div class="form-group required">
+              <label for="passwd" class="control-label">Password:</label> &nbsp;<span  class="error-msg" ng-show="userForm.passwd.$touched &&  userForm.passwd.$error.required">Password is required.</span>
+              <input type="text"  name="passwd"  name="lname" ng-model="currentEditRecord.passwd" required="required" class="form-control" id="passwd">
+
+            </div>
+
+
+            <div class="form-group required">
+              <label for="cpasswd" class="control-label">Confirm Password:</label>&nbsp;
+              <span  class="error-msg" ng-show="userForm.cpasswd.$touched &&   userForm.cpasswd.$error.required">Confirm the Password</span>
+              <span class="error-msg" ng-show="userForm.cpasswd.$touched &&    userForm.cpasswd.$error.pwmatch">Passwords don't match.</span>
+              <input type="text" name="cpasswd" pw-check="passwd"  ng-model="currentEditRecord.cpasswd"  required="required" class="form-control" id="cpasswd">
+
+            </div>
+
+              <input type="hidden" ng-model="currentEditRecord.id"  name="id" id="id">
+
+          </form>
+
+          <!-- id: id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          is_suspended: isSuspended
+          -->
+
+
+        </div>
+        <div class="modal-footer">
+
+          <button type="submit" ng-disabled="userForm.$invalid" data-dismiss="modal" class="btn btn-default" ng-click="saveOrUpdateUser(cuserForm,urrentEditRecord);">Save</button>
+          <button type="reset" ng-click="reset(userForm)" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+
+
+
+ </div>
+</body>
+</html>

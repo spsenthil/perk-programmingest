@@ -1,0 +1,40 @@
+
+.suspended {
+    background: #9C0D0D !important;
+    color: #E8E3E3;
+}
+
+.form-group.required .control-label:after {
+    /*
+    color: #d00;
+    content: "*";
+    position: absolute;
+    margin-left: 8px;
+    margin-top: 3px;
+    */
+}
+
+.error-msg {
+    padding-left: 5px;
+    font-size: 11px;
+    color: #DE125A;
+    text-align: right;
+    float: right;
+}
+
+.css-form input.ng-invalid.ng-touched {
+    border: 1px solid orangered;
+}
+
+.css-form input.ng-valid.ng-touched {
+    border: 1px solid forestgreen;
+}
+
+.thead-default{
+    color: #55595c;
+    background-color: #eceeef;
+}
+.new-user-wrap{
+    text-align: right !important;
+}
+
